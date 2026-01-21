@@ -41,7 +41,7 @@ const instrumentNames: Record<InstrumentType, string> = {
   organ: 'Organo',
 };
 
-export default function NoteRecognitionGame() {
+export default function NoteRecognitionGame({ onBack }: { onBack: () => void }) {
   const [gameState, setGameState] = useState<GameState>('idle');
   const [difficulty, setDifficulty] = useState<Difficulty>('medium');
   const [instrument, setInstrument] = useState<InstrumentType>('piano');
@@ -219,6 +219,12 @@ export default function NoteRecognitionGame() {
       <div className="relative z-10 w-full max-w-3xl mx-auto flex flex-col flex-1">
         {/* Header */}
         <div className="text-center mb-4 md:mb-8">
+          <button
+            onClick={onBack}
+            className="absolute top-4 left-4 bg-purple-500/20 hover:bg-purple-500/30 text-purple-200 px-4 py-2 rounded-xl transition-colors"
+          >
+            ← Menu
+          </button>
           <h1 className="text-4xl md:text-6xl font-bold mb-2 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
             🎵 Music Helper
           </h1>
