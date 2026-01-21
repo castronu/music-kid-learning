@@ -1,47 +1,84 @@
 'use client';
 
+import { useLanguage } from '@/lib/i18n/LanguageContext';
+import { Language } from '@/lib/i18n/translations';
+
 export type GameType = 'note-recognition' | 'melody-dictation' | 'higher-lower' | 'sequence';
 
 interface GameSelectorProps {
   onSelectGame: (game: GameType) => void;
 }
 
+const languageFlags: Record<Language, string> = {
+  it: '🇮🇹',
+  en: '🇬🇧',
+  fr: '🇫🇷',
+  es: '🇪🇸',
+};
+
+const languageNames: Record<Language, string> = {
+  it: 'Italiano',
+  en: 'English',
+  fr: 'Français',
+  es: 'Español',
+};
+
 export default function GameSelector({ onSelectGame }: GameSelectorProps) {
+  const { language, setLanguage, t } = useLanguage();
+
   const games = [
     {
       id: 'note-recognition' as GameType,
-      title: '🎵 Riconoscimento Note',
-      description: 'Ascolta e identifica la nota musicale',
+      title: `🎵 ${t.noteRecognition}`,
+      description: t.noteRecognitionDesc,
       color: 'from-purple-500 to-pink-500',
     },
     {
       id: 'melody-dictation' as GameType,
-      title: '🎼 Dettato Melodico',
-      description: 'Riproduci la sequenza di note che ascolti',
+      title: `🎼 ${t.melodyDictation}`,
+      description: t.melodyDictationDesc,
       color: 'from-blue-500 to-cyan-500',
     },
     {
       id: 'higher-lower' as GameType,
-      title: '⬆️⬇️ Alto o Basso?',
-      description: 'La seconda nota è più alta o più bassa?',
+      title: `⬆️⬇️ ${t.higherLower}`,
+      description: t.higherLowerDesc,
       color: 'from-green-500 to-emerald-500',
     },
     {
       id: 'sequence' as GameType,
-      title: '🎮 Sequenze di Note',
-      description: 'Ricorda e ripeti la sequenza (Simon Says)',
+      title: `🎮 ${t.sequenceGame}`,
+      description: t.sequenceGameDesc,
       color: 'from-orange-500 to-red-500',
     },
   ];
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4">
+      {/* Language Selector */}
+      <div className="absolute top-4 right-4 flex gap-2">
+        {(['it', 'en', 'fr', 'es'] as Language[]).map((lang) => (
+          <button
+            key={lang}
+            onClick={() => setLanguage(lang)}
+            className={`px-3 py-2 rounded-xl font-bold transition-all ${
+              language === lang
+                ? 'bg-gradient-to-r from-purple-500 to-pink-500 scale-110'
+                : 'bg-white/10 hover:bg-white/20'
+            }`}
+            title={languageNames[lang]}
+          >
+            <span className="text-2xl">{languageFlags[lang]}</span>
+          </button>
+        ))}
+      </div>
+
       <div className="text-center mb-8">
         <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-          🎵 Music Helper
+          🎵 {t.appTitle}
         </h1>
         <p className="text-xl text-purple-200">
-          Scegli un gioco per imparare la musica!
+          {t.appSubtitle}
         </p>
       </div>
 
@@ -59,7 +96,7 @@ export default function GameSelector({ onSelectGame }: GameSelectorProps) {
               {game.description}
             </p>
             <div className="mt-4 text-white/70 group-hover:text-white transition-colors">
-              Clicca per iniziare →
+              {t.start.replace('!', '')} →
             </div>
           </button>
         ))}

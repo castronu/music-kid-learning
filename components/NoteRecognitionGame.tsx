@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { audioEngine, NoteName, InstrumentType } from '@/lib/audioEngine';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 type Difficulty = 'easy' | 'medium' | 'hard';
 type GameState = 'idle' | 'playing' | 'waiting' | 'feedback';
@@ -33,15 +34,8 @@ const instrumentIcons: Record<InstrumentType, string> = {
   organ: '🎼',
 };
 
-const instrumentNames: Record<InstrumentType, string> = {
-  piano: 'Piano',
-  guitar: 'Chitarra',
-  flute: 'Flauto',
-  violin: 'Violino',
-  organ: 'Organo',
-};
-
 export default function NoteRecognitionGame({ onBack }: { onBack: () => void }) {
+  const { t } = useLanguage();
   const [gameState, setGameState] = useState<GameState>('idle');
   const [difficulty, setDifficulty] = useState<Difficulty>('medium');
   const [instrument, setInstrument] = useState<InstrumentType>('piano');
@@ -132,13 +126,13 @@ export default function NoteRecognitionGame({ onBack }: { onBack: () => void }) 
 
       setScore(prev => prev + points);
 
-      let message = `Perfetto! Era proprio "${currentNote.toUpperCase()}"! 🎵`;
+      let message = '';
       if (currentRoundHints === 0) {
-        message += ' (+3 punti - Nessun indizio!)';
+        message = t.feedbackCorrectNoHints;
       } else if (currentRoundHints <= 2) {
-        message += ` (+${points} punti - ${currentRoundHints} ${currentRoundHints === 1 ? 'indizio' : 'indizi'})`;
+        message = t.feedbackCorrectFewHints;
       } else {
-        message += ` (+${points} punto - ${currentRoundHints} indizi)`;
+        message = t.feedbackCorrectManyHints;
       }
 
       setFeedback({
@@ -148,7 +142,7 @@ export default function NoteRecognitionGame({ onBack }: { onBack: () => void }) 
     } else {
       setFeedback({
         type: 'incorrect',
-        message: `Sbagliato! Era "${currentNote?.toUpperCase()}", hai scelto "${selectedNote.toUpperCase()}"`
+        message: t.feedbackWrong(currentNote || '', selectedNote)
       });
     }
 
@@ -223,12 +217,12 @@ export default function NoteRecognitionGame({ onBack }: { onBack: () => void }) 
             onClick={onBack}
             className="absolute top-4 left-4 bg-purple-500/20 hover:bg-purple-500/30 text-purple-200 px-4 py-2 rounded-xl transition-colors"
           >
-            ← Menu
+            ← {t.menu}
           </button>
           <h1 className="text-4xl md:text-6xl font-bold mb-2 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
-            🎵 Music Helper
+            🎵 {t.appTitle}
           </h1>
-          <p className="text-lg md:text-xl text-purple-200">Riconoscimento Note Musicali</p>
+          <p className="text-lg md:text-xl text-purple-200">{t.musicalNoteRecognition}</p>
         </div>
 
         {/* Main game card */}
@@ -237,7 +231,7 @@ export default function NoteRecognitionGame({ onBack }: { onBack: () => void }) 
             <div className="space-y-8">
               {/* Difficulty Selector */}
               <div className="text-center">
-                <h2 className="text-3xl font-bold mb-4 text-purple-200">Scegli la Difficoltà</h2>
+                <h2 className="text-3xl font-bold mb-4 text-purple-200">{t.difficulty}</h2>
                 <div className="flex flex-col md:flex-row gap-4 justify-center">
                   {(['easy', 'medium', 'hard'] as Difficulty[]).map((diff) => (
                     <button
@@ -249,7 +243,7 @@ export default function NoteRecognitionGame({ onBack }: { onBack: () => void }) 
                           : 'bg-white/20 hover:bg-white/30'
                       }`}
                     >
-                      {diff === 'easy' ? '😊 Facile' : diff === 'medium' ? '🎵 Medio' : '🔥 Difficile'}
+                      {diff === 'easy' ? `😊 ${t.easy}` : diff === 'medium' ? `🎵 ${t.medium}` : `🔥 ${t.hard}`}
                     </button>
                   ))}
                 </div>
@@ -257,7 +251,7 @@ export default function NoteRecognitionGame({ onBack }: { onBack: () => void }) 
 
               {/* Instrument Selector */}
               <div className="text-center">
-                <h2 className="text-2xl font-bold mb-4 text-purple-200">Scegli lo Strumento</h2>
+                <h2 className="text-2xl font-bold mb-4 text-purple-200">{t.instrument}</h2>
                 <div className="grid grid-cols-3 md:grid-cols-5 gap-3">
                   {(['piano', 'guitar', 'flute', 'violin', 'organ'] as InstrumentType[]).map((instr) => (
                     <button
@@ -270,7 +264,7 @@ export default function NoteRecognitionGame({ onBack }: { onBack: () => void }) 
                       }`}
                     >
                       <div className="text-2xl mb-1">{instrumentIcons[instr]}</div>
-                      <div className="text-xs">{instrumentNames[instr]}</div>
+                      <div className="text-xs">{t[instr]}</div>
                     </button>
                   ))}
                 </div>
@@ -280,7 +274,7 @@ export default function NoteRecognitionGame({ onBack }: { onBack: () => void }) 
                 onClick={handleStartGame}
                 className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-6 px-8 rounded-2xl text-2xl transition-all transform hover:scale-105 glow-pink"
               >
-                🎮 Inizia il Gioco!
+                🎮 {t.start}
               </button>
 
               <div className="bg-purple-500/20 rounded-xl p-6 border border-purple-500/30 space-y-4">

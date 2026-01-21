@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { audioEngine, NoteName, InstrumentType } from '@/lib/audioEngine';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 type Difficulty = 'easy' | 'medium' | 'hard';
 type GameState = 'idle' | 'setup' | 'listening' | 'playing' | 'correct' | 'wrong';
@@ -31,6 +32,7 @@ const difficultySettings: Record<Difficulty, DifficultySettings> = {
 };
 
 export default function MelodyDictationGame({ onBack }: { onBack: () => void }) {
+  const { t } = useLanguage();
   const [gameState, setGameState] = useState<GameState>('setup');
   const [difficulty, setDifficulty] = useState<Difficulty>('medium');
   const [instrument, setInstrument] = useState<InstrumentType>('piano');
@@ -123,19 +125,19 @@ export default function MelodyDictationGame({ onBack }: { onBack: () => void }) 
             onClick={onBack}
             className="absolute top-4 left-4 bg-purple-500/20 hover:bg-purple-500/30 text-purple-200 px-4 py-2 rounded-xl transition-colors"
           >
-            ← Menu
+            ← {t.menu}
           </button>
           <h1 className="text-4xl md:text-5xl font-bold mb-2 bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-            🎼 Dettato Melodico
+            🎼 {t.melodyDictation}
           </h1>
-          <p className="text-purple-200">Ascolta e riproduci la sequenza!</p>
+          <p className="text-purple-200">{t.melodyDictationDesc}</p>
         </div>
 
         {/* Setup Screen */}
         {gameState === 'setup' && (
           <div className="space-y-8 bg-black/30 p-8 rounded-3xl border-2 border-blue-500/30">
             <div>
-              <h2 className="text-2xl font-bold text-blue-300 mb-4">Difficoltà</h2>
+              <h2 className="text-2xl font-bold text-blue-300 mb-4">{t.difficulty}</h2>
               <div className="grid grid-cols-3 gap-4">
                 {(['easy', 'medium', 'hard'] as Difficulty[]).map((diff) => (
                   <button
@@ -147,16 +149,16 @@ export default function MelodyDictationGame({ onBack }: { onBack: () => void }) 
                         : 'bg-blue-500/20 hover:bg-blue-500/30'
                     }`}
                   >
-                    {diff === 'easy' && '😊 Facile (3 note)'}
-                    {diff === 'medium' && '🎵 Medio (4 note)'}
-                    {diff === 'hard' && '🔥 Difficile (5 note)'}
+                    {diff === 'easy' && `😊 ${t.easy} ${t.easyNotes}`}
+                    {diff === 'medium' && `🎵 ${t.medium} ${t.mediumNotes}`}
+                    {diff === 'hard' && `🔥 ${t.hard} ${t.hardNotes}`}
                   </button>
                 ))}
               </div>
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold text-blue-300 mb-4">Strumento</h2>
+              <h2 className="text-2xl font-bold text-blue-300 mb-4">{t.instrument}</h2>
               <div className="grid grid-cols-5 gap-4">
                 {(['piano', 'guitar', 'flute', 'violin', 'organ'] as InstrumentType[]).map((instr) => (
                   <button
@@ -183,7 +185,7 @@ export default function MelodyDictationGame({ onBack }: { onBack: () => void }) 
               onClick={startGame}
               className="w-full py-6 rounded-2xl bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white text-2xl font-bold shadow-lg hover:shadow-2xl transition-all"
             >
-              🎮 Inizia il Gioco!
+              🎮 {t.start}
             </button>
           </div>
         )}
@@ -210,7 +212,7 @@ export default function MelodyDictationGame({ onBack }: { onBack: () => void }) 
               {gameState === 'listening' && isPlayingSequence && (
                 <div className="space-y-4">
                   <div className="text-3xl animate-pulse">🎵</div>
-                  <div className="text-2xl font-bold text-blue-300">Ascolta attentamente!</div>
+                  <div className="text-2xl font-bold text-blue-300">{t.listenCarefully2}</div>
                 </div>
               )}
 
@@ -218,14 +220,14 @@ export default function MelodyDictationGame({ onBack }: { onBack: () => void }) 
                 <div className="space-y-4">
                   <div className="text-3xl">🎹</div>
                   <div className="text-2xl font-bold text-blue-300">
-                    Riproduci la sequenza! ({userSequence.length}/{targetSequence.length})
+                    {t.reproduceSequence} ({userSequence.length}/{targetSequence.length})
                   </div>
                   <button
                     onClick={handleReplay}
                     disabled={isPlayingSequence}
                     className="bg-blue-500/30 hover:bg-blue-500/50 px-6 py-3 rounded-xl text-blue-200 font-bold disabled:opacity-50"
                   >
-                    🔁 Riascolta
+                    🔁 {t.replay}
                   </button>
                 </div>
               )}
@@ -233,14 +235,14 @@ export default function MelodyDictationGame({ onBack }: { onBack: () => void }) 
               {gameState === 'correct' && (
                 <div className="space-y-4">
                   <div className="text-6xl animate-bounce">🎉</div>
-                  <div className="text-3xl font-bold text-green-300">Perfetto!</div>
+                  <div className="text-3xl font-bold text-green-300">{t.perfect}</div>
                 </div>
               )}
 
               {gameState === 'wrong' && (
                 <div className="space-y-4">
                   <div className="text-6xl">😔</div>
-                  <div className="text-3xl font-bold text-red-300">Riprova!</div>
+                  <div className="text-3xl font-bold text-red-300">{t.tryAgain}</div>
                   <div className="text-xl text-purple-200">
                     Era: {targetSequence.join(' - ')}
                   </div>
@@ -269,7 +271,7 @@ export default function MelodyDictationGame({ onBack }: { onBack: () => void }) 
                     onClick={handleClearSequence}
                     className="bg-red-500/30 hover:bg-red-500/50 px-4 py-2 rounded-xl text-red-200 text-sm font-bold"
                   >
-                    ❌ Cancella
+                    ❌ {t.clear}
                   </button>
                 </div>
               </div>

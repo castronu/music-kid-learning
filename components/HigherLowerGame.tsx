@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { audioEngine, NoteName, InstrumentType } from '@/lib/audioEngine';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 type Difficulty = 'easy' | 'medium' | 'hard';
 type GameState = 'idle' | 'setup' | 'listening' | 'playing' | 'correct' | 'wrong';
@@ -31,6 +32,7 @@ const difficultySettings: Record<Difficulty, DifficultySettings> = {
 };
 
 export default function HigherLowerGame({ onBack }: { onBack: () => void }) {
+  const { t } = useLanguage();
   const [gameState, setGameState] = useState<GameState>('setup');
   const [difficulty, setDifficulty] = useState<Difficulty>('medium');
   const [instrument, setInstrument] = useState<InstrumentType>('piano');
@@ -118,19 +120,19 @@ export default function HigherLowerGame({ onBack }: { onBack: () => void }) {
             onClick={onBack}
             className="absolute top-4 left-4 bg-purple-500/20 hover:bg-purple-500/30 text-purple-200 px-4 py-2 rounded-xl transition-colors"
           >
-            ← Menu
+            ← {t.menu}
           </button>
           <h1 className="text-4xl md:text-5xl font-bold mb-2 bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
-            ⬆️⬇️ Alto o Basso?
+            ⬆️⬇️ {t.higherLower}
           </h1>
-          <p className="text-purple-200">La seconda nota è più alta o più bassa?</p>
+          <p className="text-purple-200">{t.higherLowerDesc}</p>
         </div>
 
         {/* Setup Screen */}
         {gameState === 'setup' && (
           <div className="space-y-8 bg-black/30 p-8 rounded-3xl border-2 border-green-500/30">
             <div>
-              <h2 className="text-2xl font-bold text-green-300 mb-4">Difficoltà</h2>
+              <h2 className="text-2xl font-bold text-green-300 mb-4">{t.difficulty}</h2>
               <div className="grid grid-cols-3 gap-4">
                 {(['easy', 'medium', 'hard'] as Difficulty[]).map((diff) => (
                   <button
@@ -142,16 +144,16 @@ export default function HigherLowerGame({ onBack }: { onBack: () => void }) {
                         : 'bg-green-500/20 hover:bg-green-500/30'
                     }`}
                   >
-                    {diff === 'easy' && '😊 Facile'}
-                    {diff === 'medium' && '🎵 Medio'}
-                    {diff === 'hard' && '🔥 Difficile'}
+                    {diff === 'easy' && `😊 ${t.easy}`}
+                    {diff === 'medium' && `🎵 ${t.medium}`}
+                    {diff === 'hard' && `🔥 ${t.hard}`}
                   </button>
                 ))}
               </div>
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold text-green-300 mb-4">Strumento</h2>
+              <h2 className="text-2xl font-bold text-green-300 mb-4">{t.instrument}</h2>
               <div className="grid grid-cols-5 gap-4">
                 {(['piano', 'guitar', 'flute', 'violin', 'organ'] as InstrumentType[]).map((instr) => (
                   <button
@@ -178,7 +180,7 @@ export default function HigherLowerGame({ onBack }: { onBack: () => void }) {
               onClick={startGame}
               className="w-full py-6 rounded-2xl bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white text-2xl font-bold shadow-lg hover:shadow-2xl transition-all"
             >
-              🎮 Inizia il Gioco!
+              🎮 {t.start}
             </button>
           </div>
         )}
@@ -205,7 +207,7 @@ export default function HigherLowerGame({ onBack }: { onBack: () => void }) {
               {(gameState === 'listening' || isPlaying) && (
                 <div className="space-y-4">
                   <div className="text-6xl animate-pulse">🎵</div>
-                  <div className="text-2xl font-bold text-green-300">Ascolta le due note!</div>
+                  <div className="text-2xl font-bold text-green-300">{t.listenToTwoNotes}</div>
                   <div className="text-purple-200">Prima nota... poi seconda nota...</div>
                 </div>
               )}
@@ -214,13 +216,13 @@ export default function HigherLowerGame({ onBack }: { onBack: () => void }) {
                 <div className="space-y-4">
                   <div className="text-3xl">🤔</div>
                   <div className="text-2xl font-bold text-green-300">
-                    La seconda nota era più alta o più bassa?
+                    {t.wasSecondNoteHigherOrLower}
                   </div>
                   <button
                     onClick={handleReplay}
                     className="bg-green-500/30 hover:bg-green-500/50 px-6 py-3 rounded-xl text-green-200 font-bold"
                   >
-                    🔁 Riascolta
+                    🔁 {t.replay}
                   </button>
                 </div>
               )}
@@ -228,7 +230,7 @@ export default function HigherLowerGame({ onBack }: { onBack: () => void }) {
               {gameState === 'correct' && (
                 <div className="space-y-4">
                   <div className="text-6xl animate-bounce">🎉</div>
-                  <div className="text-3xl font-bold text-green-300">Esatto!</div>
+                  <div className="text-3xl font-bold text-green-300">{t.exactly}</div>
                   <div className="text-xl text-purple-200">
                     {firstNote} → {secondNote} ({noteFrequencies[secondNote] > noteFrequencies[firstNote] ? 'più alta' : 'più bassa'})
                   </div>
@@ -238,7 +240,7 @@ export default function HigherLowerGame({ onBack }: { onBack: () => void }) {
               {gameState === 'wrong' && (
                 <div className="space-y-4">
                   <div className="text-6xl">😔</div>
-                  <div className="text-3xl font-bold text-red-300">Non proprio!</div>
+                  <div className="text-3xl font-bold text-red-300">{t.notQuite}</div>
                   <div className="text-xl text-purple-200">
                     {firstNote} → {secondNote} ({noteFrequencies[secondNote] > noteFrequencies[firstNote] ? 'più alta' : 'più bassa'})
                   </div>
@@ -253,13 +255,13 @@ export default function HigherLowerGame({ onBack }: { onBack: () => void }) {
                   onClick={() => handleAnswer('higher')}
                   className="py-8 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold text-2xl shadow-lg hover:scale-105 transition-all"
                 >
-                  ⬆️ Più Alta
+                  ⬆️ {t.higher}
                 </button>
                 <button
                   onClick={() => handleAnswer('lower')}
                   className="py-8 rounded-2xl bg-gradient-to-br from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold text-2xl shadow-lg hover:scale-105 transition-all"
                 >
-                  ⬇️ Più Bassa
+                  ⬇️ {t.lower}
                 </button>
               </div>
             )}

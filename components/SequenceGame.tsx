@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { audioEngine, NoteName, InstrumentType } from '@/lib/audioEngine';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 type Difficulty = 'easy' | 'medium' | 'hard';
 type GameState = 'idle' | 'setup' | 'watching' | 'playing' | 'correct' | 'wrong' | 'gameover';
@@ -32,6 +33,7 @@ const difficultySettings: Record<Difficulty, DifficultySettings> = {
 };
 
 export default function SequenceGame({ onBack }: { onBack: () => void }) {
+  const { t } = useLanguage();
   const [gameState, setGameState] = useState<GameState>('setup');
   const [difficulty, setDifficulty] = useState<Difficulty>('medium');
   const [instrument, setInstrument] = useState<InstrumentType>('piano');
@@ -136,19 +138,19 @@ export default function SequenceGame({ onBack }: { onBack: () => void }) {
             onClick={onBack}
             className="absolute top-4 left-4 bg-purple-500/20 hover:bg-purple-500/30 text-purple-200 px-4 py-2 rounded-xl transition-colors"
           >
-            ← Menu
+            ← {t.menu}
           </button>
           <h1 className="text-4xl md:text-5xl font-bold mb-2 bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
-            🎮 Sequenze di Note
+            🎮 {t.sequenceGame}
           </h1>
-          <p className="text-purple-200">Ricorda e ripeti la sequenza! (Simon Says)</p>
+          <p className="text-purple-200">{t.sequenceGameDesc}</p>
         </div>
 
         {/* Setup Screen */}
         {gameState === 'setup' && (
           <div className="space-y-8 bg-black/30 p-8 rounded-3xl border-2 border-orange-500/30">
             <div>
-              <h2 className="text-2xl font-bold text-orange-300 mb-4">Difficoltà</h2>
+              <h2 className="text-2xl font-bold text-orange-300 mb-4">{t.difficulty}</h2>
               <div className="grid grid-cols-3 gap-4">
                 {(['easy', 'medium', 'hard'] as Difficulty[]).map((diff) => (
                   <button
@@ -160,16 +162,16 @@ export default function SequenceGame({ onBack }: { onBack: () => void }) {
                         : 'bg-orange-500/20 hover:bg-orange-500/30'
                     }`}
                   >
-                    {diff === 'easy' && '😊 Facile'}
-                    {diff === 'medium' && '🎵 Medio'}
-                    {diff === 'hard' && '🔥 Difficile'}
+                    {diff === 'easy' && `😊 ${t.easy}`}
+                    {diff === 'medium' && `🎵 ${t.medium}`}
+                    {diff === 'hard' && `🔥 ${t.hard}`}
                   </button>
                 ))}
               </div>
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold text-orange-300 mb-4">Strumento</h2>
+              <h2 className="text-2xl font-bold text-orange-300 mb-4">{t.instrument}</h2>
               <div className="grid grid-cols-5 gap-4">
                 {(['piano', 'guitar', 'flute', 'violin', 'organ'] as InstrumentType[]).map((instr) => (
                   <button
@@ -194,8 +196,8 @@ export default function SequenceGame({ onBack }: { onBack: () => void }) {
 
             {bestScore > 0 && (
               <div className="bg-yellow-500/20 border-2 border-yellow-500/50 rounded-xl p-4 text-center">
-                <div className="text-yellow-300 text-sm mb-1">🏆 Record Personale</div>
-                <div className="text-yellow-200 text-3xl font-bold">Livello {bestScore}</div>
+                <div className="text-yellow-300 text-sm mb-1">🏆 {t.personalBest}</div>
+                <div className="text-yellow-200 text-3xl font-bold">{t.level} {bestScore}</div>
               </div>
             )}
 
@@ -203,7 +205,7 @@ export default function SequenceGame({ onBack }: { onBack: () => void }) {
               onClick={startGame}
               className="w-full py-6 rounded-2xl bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white text-2xl font-bold shadow-lg hover:shadow-2xl transition-all"
             >
-              🎮 Inizia il Gioco!
+              🎮 {t.start}
             </button>
           </div>
         )}
@@ -212,24 +214,24 @@ export default function SequenceGame({ onBack }: { onBack: () => void }) {
         {gameState === 'gameover' && (
           <div className="space-y-6 bg-black/30 p-8 rounded-3xl border-2 border-red-500/30 text-center">
             <div className="text-6xl mb-4">😢</div>
-            <h2 className="text-4xl font-bold text-red-300 mb-2">Game Over!</h2>
+            <h2 className="text-4xl font-bold text-red-300 mb-2">{t.gameOver}</h2>
             <div className="space-y-2">
               <div className="text-2xl text-purple-200">
-                Hai raggiunto il livello <span className="font-bold text-orange-300">{level}</span>
+                {t.youReachedLevel} <span className="font-bold text-orange-300">{level}</span>
               </div>
               {level > bestScore && (
                 <div className="text-xl text-yellow-300 font-bold animate-pulse">
-                  🎉 Nuovo Record!
+                  🎉 {t.newRecord}
                 </div>
               )}
               {bestScore > 0 && level <= bestScore && (
                 <div className="text-lg text-purple-300">
-                  Record personale: Livello {bestScore}
+                  {t.personalBest} {t.level} {bestScore}
                 </div>
               )}
             </div>
             <div className="bg-purple-500/20 rounded-xl p-4 mt-4">
-              <div className="text-purple-200 mb-2">La sequenza era:</div>
+              <div className="text-purple-200 mb-2">{t.sequenceWas}</div>
               <div className="flex justify-center gap-2 flex-wrap">
                 {sequence.map((note, index) => (
                   <div
@@ -245,7 +247,7 @@ export default function SequenceGame({ onBack }: { onBack: () => void }) {
               onClick={handlePlayAgain}
               className="w-full py-6 rounded-2xl bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white text-2xl font-bold shadow-lg hover:shadow-2xl transition-all mt-6"
             >
-              🔄 Gioca Ancora
+              🔄 {t.playAgain}
             </button>
           </div>
         )}
@@ -256,10 +258,10 @@ export default function SequenceGame({ onBack }: { onBack: () => void }) {
             {/* Level Display */}
             <div className="bg-black/30 p-4 md:p-6 rounded-2xl border-2 border-orange-500/30">
               <div className="text-center">
-                <div className="text-xs md:text-sm text-orange-300 mb-1">Livello</div>
+                <div className="text-xs md:text-sm text-orange-300 mb-1">{t.level}</div>
                 <div className="text-3xl md:text-4xl font-bold text-orange-200">{level}</div>
                 <div className="text-xs md:text-sm text-orange-300 mt-2">
-                  Sequenza di {sequence.length} {sequence.length === 1 ? 'nota' : 'note'}
+                  {t.sequenceOf} {sequence.length} {sequence.length === 1 ? t.note : t.notes}
                 </div>
               </div>
             </div>
@@ -270,7 +272,7 @@ export default function SequenceGame({ onBack }: { onBack: () => void }) {
                 <div className="space-y-4">
                   <div className="text-6xl animate-pulse">👀</div>
                   <div className="text-2xl font-bold text-orange-300">
-                    {isPlayingSequence ? 'Guarda e ascolta!' : 'Preparati...'}
+                    {isPlayingSequence ? t.watchAndListen : t.prepareYourself}
                   </div>
                 </div>
               )}
@@ -279,7 +281,7 @@ export default function SequenceGame({ onBack }: { onBack: () => void }) {
                 <div className="space-y-4">
                   <div className="text-3xl">🎹</div>
                   <div className="text-2xl font-bold text-orange-300">
-                    Il tuo turno! ({userSequence.length}/{sequence.length})
+                    {t.yourTurnSeq} ({userSequence.length}/{sequence.length})
                   </div>
                 </div>
               )}
@@ -288,7 +290,7 @@ export default function SequenceGame({ onBack }: { onBack: () => void }) {
                 <div className="space-y-4">
                   <div className="text-6xl animate-bounce">🎉</div>
                   <div className="text-3xl font-bold text-green-300">Perfetto!</div>
-                  <div className="text-xl text-purple-200">Livello {level + 1}...</div>
+                  <div className="text-xl text-purple-200">{t.level} {level + 1}...</div>
                 </div>
               )}
 

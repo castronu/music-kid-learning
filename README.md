@@ -10,7 +10,8 @@ Un'applicazione web interattiva per aiutare i bambini (6-7 anni) a imparare la m
 - 🎯 **Tre livelli di difficoltà** - Facile, Medio, Difficile
 - 📊 **Sistema di punteggio** - Traccia le tue prestazioni
 - 🎨 **Interfaccia musicale** - Design elegante con tema musicale
-- 🇮🇹 **Lingua italiana** - Sistema di notazione europea (do, re, mi, fa, sol, la, si)
+- 🌍 **Multilingue** - Italiano 🇮🇹, Inglese 🇬🇧, Francese 🇫🇷, Spagnolo 🇪🇸
+- 🔄 **Auto-detect lingua** - Rileva automaticamente la lingua del browser
 - 📱 **Responsive** - Ottimizzato per mobile e desktop
 
 ## 🚀 Come Iniziare
